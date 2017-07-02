@@ -48,9 +48,9 @@ import os
 
 #### GETS #############################################################
 
-def get_batch(sid):
+def get_batch(bid):
     '''get a single report, or return 404'''
-    keyargs = {'id':sid}
+    keyargs = {'id':bid}
     try:
         batch = Batch.objects.get(**keyargs)
     except Batch.DoesNotExist:

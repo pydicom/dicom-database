@@ -16,28 +16,28 @@
                     <div class="col-md-12">
                         <div class="card">
                             <div class="header">
-                                <h4 class="title">Batches</h4>
+                                <h4 class="title">{{ batch.name }}</h4>
                            </div>
-                            {% if batches %}
+                            {% if batch.image_set.count > 0 %}
                             <div class="content table-responsive table-full-width">
                                 <table class="table table-striped">
                                     <thead>
-                                        <th>Batch ID</th>
-                                        <th>Name</th>
-                                    	<th>Images</th>
-                                    	<th>Created</th>
+                                        <th></th>
+                                    	<th>UID</th>
+                                    	<th>Headers</th>
+                                    	<th>Added</th>
                                     	<th>Modified</th>
                                     	<th>Status</th>
                                     </thead>
                                     <tbody>
-                                        {% for batch in batches %}
+                                        {% for image in batch.image_set.all %}
                                         <tr>
-                                        	<td>{{ batch.id }}</td>
-                                        	<td><a href="{% url 'batch_details' batch.id %}">{{ batch.uid }}<a></td>
-                                                <td>{{ batch.image_set.count }}
-                                        	<td>{{ batch.add_date }}</td>
-                                        	<td>{{ batch.modify_date }}</td>
-                                        	<td>{% include "batch/status.html" %}</td>
+                                        	<td></td>
+                                                <td>{{ image.uid }}</td>
+                                                <td>{{ image.headers.count }}</td>
+                                        	<td>{{ image.add_date }}</td>
+                                        	<td>{{ image.modify_date }}</td>
+                                        	<td>{% include "batch/image_status.html" %}</td>
                                         </tr>
                                         {% endfor %}
                                     </tbody>
@@ -45,7 +45,7 @@
                             </div>
                             {% else %}
                             <div style="padding-top:30px">
-                                <p class="alert alert-info">There are no batches in the queue.</p>
+                                <p class="alert alert-info">There are no images in this batch.</p>
                             </div>
                             {% endif %}
                         </div>
