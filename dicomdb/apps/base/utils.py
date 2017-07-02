@@ -22,16 +22,25 @@ SOFTWARE.
 
 '''
 
-from django.conf.urls import url
-from django.views.generic.base import TemplateView
-import dicomdb.apps.main.views as views
+from django.core.files import File
 
-urlpatterns = [
-    url(r'^$', views.index_view, name="home"),
-    url(r'^settings$', views.settings_view, name="settings"),
-    url(r'^batch/(?P<bid>\d+)/$', views.batch_details, name="batch_details"),
-    url(r'^batch/(?P<bid>\d+)/view$', views.view_batch, name="view_batch"),
-    url(r'^image/(?P<iid>\d+)/$', views.image_details, name="image_details"),
-]
+import tempfile
+import os
+import re
 
+
+def extract_tmp(memory_file,base_dir=None):
+    '''extract tmp will extract a file to a temporary location
+    :base_dir: if defined, will create directory here
+    '''
+    if base_dir == None:
+        tmpdir = tempfile.mkdtemp()
+    else:
+        tmpdir = tempfile.mkdtemp(dir=base_dir)
+
+    file_name = '%s/%s' %(tmpdir,memory_file.name)
+    with open(file_name, 'wb+') as dest:
+        for chunk in memory_file.chunks():
+            dest.write(chunk)
+    return file_name
 

@@ -59,7 +59,7 @@ RUN pip install django-cors-headers
 RUN pip install django-user-agents
 RUN pip install django-guardian
 RUN pip install pyinotify
-
+RUN pip install haikunator
 
 # Install pydicom
 WORKDIR /tmp

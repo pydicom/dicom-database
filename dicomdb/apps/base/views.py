@@ -21,7 +21,17 @@ SOFTWARE.
 
 '''
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.views import View
+from dicomdb.apps.base.tasks import batch_memory_upload 
+from dicomdb.apps.main.models import Batch
+from dicomdb.apps.main.utils import get_batch
+from django.contrib import messages
+import pickle
+
+from haikunator import Haikunator
+generator = Haikunator()
 
 # Error Pages #########################################
 
@@ -30,3 +40,46 @@ def handler404(request):
 
 def handler500(request):
     return render(request,'base/500.html')
+
+
+# Upload Dataset as Batch #############################
+
+
+class UploadDatasets(View):
+    '''UploadDatasets will take an uploaded file, and parse it as a dataset for correctness and import to 
+    docfish. A dataset that is too large for this interface should be upload in a different method (TBD)
+    '''
+    def get(self, request, bid=None):
+
+        if bid is None:
+            bid = generator.haikunate()  
+            batch = Batch.objects.create(uid=bid)
+            batch.save()
+        else:
+            batch = get_batch(bid)
+
+        context = {"batch":batch}
+
+        return render(self.request, 'upload/datasets_upload.html', context)
+
+
+    def post(self, request, bid):
+
+        batch = get_batch(bid)
+
+        # A post without files, not sure how/why this would be done, but should be caught
+        if request.FILES == None:
+            data = {'is_valid': False, 'name': "No files provided", 'url': "/"}
+            return JsonResponse(data)
+            
+        # Generate a new batch
+        data = batch_memory_upload(memory_file=request.FILES['file'],
+                                   batch=batch)
+
+        if data['is_valid'] == True:
+            messages.info(request,"Your datasets are uploading. Please refresh the page if you do not see them.")
+
+        return JsonResponse(data)
+
+def clear_database(request):
+    return redirect(request.POST.get('next'))

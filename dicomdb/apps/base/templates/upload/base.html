@@ -1,0 +1,28 @@
+{% extends 'base/base.html' %}
+
+{% block content %}
+{% include "base/loader.html" %}
+<form method="post" action="{% url 'clear_database' %}">
+    {% csrf_token %}
+    <input type="hidden" name="next" value="{{ request.path }}">
+    <!--<button type="submit" class="btn btn-danger pull-right">
+        <span class="glyphicon glyphicon-trash"></span> Clear List
+    </button>-->
+</form>
+
+<h4 class="page-header">
+    Upload Dicom
+    <small>{% block title %}{% endblock %}</small>
+</h4>
+    <br>
+    <p style="font-style:italic;padding-bottom:20px">Here you can upload images to create a new batch.<p>
+    <p class="alert alert-info">By uploading datasets, you assert that this application is not being served in a publicly accessible location, and if so, that datasets do not include any identifying, personal information, and qualify as <a href="https://uit.stanford.edu/guide/riskclassifications#application-classification-examples" target="_blank">low risk</a> Pydicom and Stanford University do not take responsibility for ensuring the protection or archival of the data uploaded to this application.</p><br><br>
+
+<div class="row">
+    <div class="col-md-9">
+      {% block upload_content %}
+      {% endblock %}
+    </div>
+</div>
+
+{% endblock %}

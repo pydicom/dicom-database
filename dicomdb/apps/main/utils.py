@@ -37,6 +37,7 @@ from django.shortcuts import (
 from django.contrib.auth.models import User
 from dicomdb.apps.main.models import (
     Batch,
+    Image,
     Header,
     HeaderValue,
     HeaderField
@@ -49,7 +50,7 @@ import os
 #### GETS #############################################################
 
 def get_batch(bid):
-    '''get a single report, or return 404'''
+    '''get a single batch, or return 404'''
     keyargs = {'id':bid}
     try:
         batch = Batch.objects.get(**keyargs)
@@ -57,6 +58,17 @@ def get_batch(bid):
         raise Http404
     else:
         return batch
+
+
+def get_image(iid):
+    '''get a single image, or return 404'''
+    keyargs = {'id':iid}
+    try:
+        image = Image.objects.get(**keyargs)
+    except Image.DoesNotExist:
+        raise Http404
+    else:
+        return image
 
 
 def ls_fullpath(dirname,ext=None):
@@ -84,6 +96,32 @@ def save_image_dicom(dicom,dicom_file,basename=None):
                                save=True)  
     dicom.save()
     return dicom
+
+
+
+def upload_dicom_batch(batch,dicom_file):
+    '''upload a dicom image to a batch
+    '''
+    
+    # The dicom folder will be named based on the accession#
+    dcm = read_file(dicom_file,force=True)
+    dicom_uid = os.path.basename(dicom_file)
+
+    # Create the Image object in the database
+    # A dicom instance number must be unique for its batch
+    dicom = Image.objects.create(batch=batch,
+                                 uid=dicom_uid)
+
+    # Save the dicom file to storage
+    dicom = save_image_dicom(dicom=dicom,
+                             dicom_file=dicom_file) # Also saves
+
+    # Add all header fields (for now not private)
+    dicom = add_header_fields(instance=dicom,
+                              dicom=dcm)
+
+    return dicom
+
 
 
 ## MODELS ##############################################################

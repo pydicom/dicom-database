@@ -34,5 +34,10 @@ favicon_view = RedirectView.as_view(url='/static/img/favicon/favicon.ico',
                                     permanent=True)
 
 urlpatterns = [
-    url(r'^favicon\.ico$', favicon_view)
+ 
+    url(r'^favicon\.ico$', favicon_view),
+    url(r'^batch/new$', views.UploadDatasets.as_view(), name='upload_datasets'),         # get
+    url(r'^(?P<bid>\d+)/new$', views.UploadDatasets.as_view(), name='upload_datasets'),  # post
+    url(r'^clear/$', views.clear_database, name='clear_database'),
+
 ]

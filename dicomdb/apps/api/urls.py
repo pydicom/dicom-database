@@ -35,6 +35,7 @@ swagger_view = get_swagger_view(title='dicomdb API', url='')
 router = routers.DefaultRouter()
 router.register(r'^images', api_views.ImageViewSet)
 router.register(r'^batches', api_views.BatchViewSet)
+router.register(r'^headers', api_views.HeaderViewSet)
 
 
 urlpatterns = [

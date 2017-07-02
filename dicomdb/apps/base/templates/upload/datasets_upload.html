@@ -1,0 +1,44 @@
+{% extends 'upload/base.html' %}
+
+{% load static %}
+
+{% block scripts %}
+  <script src="{% static 'js/jquery-file-upload/vendor/jquery.ui.widget.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.iframe-transport.js' %}"></script>
+  <script src="{% static 'js/jquery-file-upload/jquery.fileupload.js' %}"></script>
+  <script src="{% static 'js/progress-bar-upload.js' %}"></script>
+  <script>
+    $(document).ready(function(){
+        $("#fileupload")
+    })
+  </script>
+{% endblock %}
+
+{% block upload_content %}
+  <div style="margin-bottom: 20px;">
+    <button type="button" class="btn btn-primary js-upload-photos" style='cursor:pointer'>
+      <span class="glyphicon glyphicon-cloud-upload"></span> Upload Datasets
+    </button>
+    <input id="fileupload" type="file" name="file" multiple
+           style="display: none;"
+           data-url="{% url 'upload_datasets' batch.id %}"
+           data-form-data='{"csrfmiddlewaretoken": "{{ csrf_token }}"}'>
+    </div>
+
+  <table id="gallery" class="table table-bordered">
+    <thead>
+      <tr>
+        <th>Files</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+
+  <div class="row" id="next-steps" style="display:none">
+      <div class="col-md-12">
+         <p>If you want to annotate images or text, you will need to create labels.</p>
+      </div>
+  </div>
+
+{% endblock %}

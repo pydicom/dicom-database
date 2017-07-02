@@ -1,4 +1,5 @@
 '''
+
 Copyright (c) 2017 Vanessa Sochat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -21,40 +22,56 @@ SOFTWARE.
 
 '''
 
-from django.contrib.auth.models import User
 from dicomdb.apps.main.models import (
     Batch,
     Image,
-    Header,
-    HeaderField,
-    HeaderValue
+    Header
 )
 
-from rest_framework import serializers
+from dicomdb.apps.main.utils import get_batch
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
 
-class BatchSerializer(serializers.ModelSerializer):
-    image_set = serializers.PrimaryKeyRelatedField(many=True, 
-                                                   queryset=Image.objects.all())
+from django.http import (
+    HttpResponse, 
+    JsonResponse
+)
 
-    class Meta:
-        model = Batch
-        fields = ('uid','status','add_date','modify_date','id','image_set',)
+from django.http.response import (
+    HttpResponseRedirect, 
+    HttpResponseForbidden, 
+    Http404
+)
+
+from django.shortcuts import (
+    get_object_or_404, 
+    render_to_response, 
+    render, 
+    redirect
+)
+
+import os
+
+def get_batch_context(bid):
+    '''a repeated sequence of calls to get the context
+    for a batch based on id'''
+    batch = get_batch(bid)    
+    context = {"active":"dashboard",
+               "batch" : batch,
+               "title": batch.uid }
+    return context
+
+def batch_details(request,bid):
+    '''view details for a batch 
+    '''
+    context = get_batch_context(bid)
+    return render(request, 'batch/batch_details.html', context)
 
 
+def view_batch(request,bid):
+    '''view details for a batch 
+    '''
+    context = get_batch_context(bid)
+    return render(request, 'batch/view_batch.html', context)
 
-class HeaderSerializer(serializers.ModelSerializer):
-    field = serializers.PrimaryKeyRelatedField(queryset=HeaderField.objects.all())
-    value = serializers.PrimaryKeyRelatedField(queryset=HeaderValue.objects.all())
-
-    class Meta:
-        model = Header
-        fields = ('id','field','value','add_date',)
-
-
-class ImageSerializer(serializers.ModelSerializer):
-    headers = serializers.PrimaryKeyRelatedField(many=True, 
-                                                 queryset=Header.objects.all())
-
-    class Meta:
-        model = Image
-        fields = ('uid','status','add_date','modify_date','id','batch','headers',)

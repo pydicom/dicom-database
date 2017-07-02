@@ -42,9 +42,8 @@ from dicomdb.settings import DICOMIMPORT_DELETE
 
 from dicomdb.apps.main.utils import (
     add_batch_error,
-    add_header_fields,
     change_status,
-    save_image_dicom,
+    upload_dicom_batch
 )
 
 
@@ -84,22 +83,9 @@ def import_dicomdir(dicom_dir):
         # Add in each dicom file to the series
         for dcm_file in dicom_files:
             try:
-                # The dicom folder will be named based on the accession#
-                dcm = read_file(dcm_file,force=True)
-                dicom_uid = os.path.basename(dcm_file)
 
-                # Create the Image object in the database
-                # A dicom instance number must be unique for its batch
-                dicom = Image.objects.create(batch=batch,
-                                             uid=dicom_uid)
-
-                # Save the dicom file to storage
-                dicom = save_image_dicom(dicom=dicom,
-                                         dicom_file=dcm_file) # Also saves
-
-                # Add all header fields (for now not private)
-                dicom = add_header_fields(instance=dicom,
-                                          dicom=dcm)
+                dicom = upload_dicom_batch(batch=batch,
+                                           dicom_file=dcm_file)
 
                 # Only remove files successfully imported
                 if DICOMIMPORT_DELETE:

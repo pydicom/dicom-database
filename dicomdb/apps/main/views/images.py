@@ -1,6 +1,6 @@
 '''
 
-Copyright (c) 2017 Vanessa Sochat, All Rights Reserved
+Copyright (c) 2017 Vanessa Sochat
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -22,16 +22,45 @@ SOFTWARE.
 
 '''
 
-from django.conf.urls import url
-from django.views.generic.base import TemplateView
-import dicomdb.apps.main.views as views
+from dicomdb.apps.main.models import (
+    Batch,
+    Image,
+    Header
+)
 
-urlpatterns = [
-    url(r'^$', views.index_view, name="home"),
-    url(r'^settings$', views.settings_view, name="settings"),
-    url(r'^batch/(?P<bid>\d+)/$', views.batch_details, name="batch_details"),
-    url(r'^batch/(?P<bid>\d+)/view$', views.view_batch, name="view_batch"),
-    url(r'^image/(?P<iid>\d+)/$', views.image_details, name="image_details"),
-]
+from dicomdb.apps.main.utils import get_image
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
+from django.contrib import messages
 
+from django.http import (
+    HttpResponse, 
+    JsonResponse
+)
+
+from django.http.response import (
+    HttpResponseRedirect, 
+    HttpResponseForbidden, 
+    Http404
+)
+
+from django.shortcuts import (
+    get_object_or_404, 
+    render_to_response, 
+    render, 
+    redirect
+)
+
+import os
+
+
+def image_details(request,iid):
+    '''view details for an image 
+    '''
+    image = get_image(iid)
+    context = {"active":"dashboard",
+               "image" : image,
+               "title": image.uid }
+ 
+    return render(request, 'images/image_details.html', context)
 

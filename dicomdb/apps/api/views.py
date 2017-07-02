@@ -35,7 +35,8 @@ import hashlib
 from dicomdb.settings import API_VERSION as APIVERSION
 from dicomdb.apps.main.models import (
     Batch,
-    Image
+    Image,
+    Header
 )
 
 from rest_framework import viewsets, generics
@@ -43,7 +44,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from dicomdb.apps.api.serializers import (
     BatchSerializer,
-    ImageSerializer
+    ImageSerializer,
+    HeaderSerializer
 )
 from django.contrib.auth.models import User
 
@@ -58,6 +60,13 @@ def api_view(request,api_version=None):
     context = {"api_version":api_version,
                "active":"api"}
     return render(request, 'routes/api.html', context)
+
+
+class HeaderViewSet(viewsets.ReadOnlyModelViewSet):
+    '''A header includes a field and value
+    '''
+    queryset = Header.objects.all()
+    serializer_class = HeaderSerializer
 
 
 class BatchViewSet(viewsets.ReadOnlyModelViewSet):
