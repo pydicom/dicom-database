@@ -38,6 +38,8 @@ from dicomdb.apps.main.models import (
     Image
 )
 
+from dicomdb.settings import DICOMIMPORT_DELETE
+
 from dicomdb.apps.main.utils import (
     add_batch_error,
     add_header_fields,
@@ -77,11 +79,11 @@ def import_dicomdir(dicom_dir):
         # The batch --> the folder with a set of dicoms tied to one request
         dcm_folder = os.path.basename(dicom_dir)   
         batch,created = Batch.objects.get_or_create(uid=dcm_folder)
+        batch.save()
 
         # Add in each dicom file to the series
         for dcm_file in dicom_files:
             try:
-
                 # The dicom folder will be named based on the accession#
                 dcm = read_file(dcm_file,force=True)
                 dicom_uid = os.path.basename(dcm_file)
@@ -100,14 +102,14 @@ def import_dicomdir(dicom_dir):
                                           dicom=dcm)
 
                 # Only remove files successfully imported
-                os.remove(dcm_file)
-
+                if DICOMIMPORT_DELETE:
+                    os.remove(dcm_file)
 
             # Note that on error we don't remove files
             except InvalidDicomError:
                 message = "InvalidDicomError: %s skipping." %(dcm_file)
                 batch = add_batch_error(message,batch)
-               
+
             except KeyError:
                 message = "KeyError: %s is possibly invalid, skipping." %(dcm_file)
                 batch = add_batch_error(message,batch)
@@ -116,8 +118,8 @@ def import_dicomdir(dicom_dir):
         # If there were no errors on import, we should remove the directory
         if not batch.has_error:
 
-            # Should only be called given no error, and should trigger error if not empty
-            os.rmdir(dicom_dir)
+            if DICOMIMPORT_DELETE:
+                os.rmdir(dicom_dir)
 
     else:
         bot.warning('Cannot find %s' %dicom_dir)

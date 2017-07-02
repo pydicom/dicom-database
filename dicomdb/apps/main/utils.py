@@ -94,6 +94,8 @@ def add_header_fields(instance,dicom=None,include_private=False):
     if dicom is None:
         dicom = read_file(instance.image.path)
 
+    skip = ["PixelData"]
+
     fields = dicom.dir()
     if include_private:
         from deid.dicom.tags import get_private
@@ -101,7 +103,7 @@ def add_header_fields(instance,dicom=None,include_private=False):
 
     for field in fields:
         values = dicom.get(field)
-        if values not in [None,'']:
+        if values not in [None,''] and field not in skip:
 
             header_field,created = HeaderField.objects.get_or_create(field=field)
             if not isinstance(values,list):

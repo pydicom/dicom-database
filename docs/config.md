@@ -15,6 +15,16 @@ Once you have your `secrets.py`, it needs the following added:
  - `DEBUG`: Make sure to set this to `False` for production.
 
 
+## Dicom Import
+Right now, the only setting to configure is whether you want the dicom files deleted after import from the `/data` (or other mapped) directory:
+
+```
+DICOMIMPORT_DELETE=False
+```
+
+It is currently set to False.
+
+
 ## Authentication
 If you look in [dicomdb/settings/auth.py](../dicomdb/settings/auth.py) you will see something called `lockdown` and that it is turned on:
 
