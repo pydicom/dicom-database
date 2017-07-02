@@ -1,0 +1,20 @@
+# Compiled pyc #
+################
+*.pyc
+.*
+!/.gitignore
+sendit/settings/secrets.py
+sendit/logs
+sendit/watcher.pid
+
+# Static #
+##########
+/images
+/static
+/static/css
+/static/images
+/static/js
+/static/favicon.ico
+/static/fonts
+migrations
+OLD
