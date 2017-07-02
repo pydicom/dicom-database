@@ -1,0 +1,37 @@
+{% extends "base/base.html" %}
+{% load staticfiles %}
+{% load static %}
+{% block head %}
+{% endblock %}
+
+{% block body %}
+<div class="container">
+<div class="row">
+    <div class="col-md-2" style="padding-top:50px">
+        <h2>Dicom Database</h2>
+    </div>
+    <div class="col-md-10">
+        <p style="padding-top:80px;line-height:1.7em">Hi there! The Dicom Database application is for local management of DICOM images. These images can have personal health identifiers, so you must authenticate to get access to this application. If you are an admin, this password should be in the application settings.</p>
+    </div>
+</div>
+<hr>
+<div class="row">
+<div class="col-md-2" style="margin-top:20px"></div>
+<div class="col-md-3" style="margin-top:20px">
+   <img src="{% static 'img/logo/logo.png' %}" />
+</div>
+<div class="col-md-7">
+    <div id="lockdown" style='margin-top:100px'>
+	{% if form %}
+        <form action="" method="post">{% csrf_token %}
+	    {{ form.as_p }}
+            <button class="btn btn-default btn-lg" 
+                    type="submit" 
+                    style="margin-top:30px;"
+                    value="Preview">Enter</button>
+        </form>
+	{% endif %}
+    </div>
+</div>
+</div>
+{% endblock %}

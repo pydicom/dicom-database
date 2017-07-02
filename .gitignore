@@ -9,6 +9,7 @@ sendit/watcher.pid
 
 # Static #
 ##########
+./data
 /images
 /static
 /static/css
