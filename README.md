@@ -1,5 +1,7 @@
 # Dicom Database
 
+**under development**
+
 ![docs/img/dicom-database.png](docs/img/dicom-database.png)
 
 This is a simple web application for sending and receiving dicom datasets, a simplified version of [sendit](https://www.github.com/pydicom/sendit). It is optimized for the following:
